@@ -1,3 +1,4 @@
+https://drive.google.com/file/d/1G2Lh7ZyYl1msUMjjeSVgoTjmPzcqTpuo/view?usp=drive_link : download from this link for the ISRIC soil data in the .csv format named as INsoil.csv
 Five steps to make soil data format
 1. Download the Spyder IDE and paste the code a .py will be created save with name soil.py in documents; next insoil.csv place it in Document folder of PC.
 2. create a location data xlxs file for location data or put same location data in CCEdata.xlxs

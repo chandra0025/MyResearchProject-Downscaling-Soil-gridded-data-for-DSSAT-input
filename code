@@ -1,0 +1,55 @@
+import pandas as pd
+import json
+import requests
+import os
+import csv
+df = pd.read_excel('./CCEdataGT.xlsx')
+json_data = df.to_json(orient="records")
+json_d = json.loads(json_data)
+
+txtFile = pd.read_csv ('./INsoil.csv', sep=',', header=None)
+file_json_data = txtFile.to_json(orient="records")
+file_json_d = json.loads(file_json_data)
+#print(txtFile)
+finalfile = []
+finaltxt = []
+for j in range(len(json_d)):
+    latitude = round(float(str(json_d[j]['Lat']).strip()),3)
+    longitude = round(float(str(json_d[j]['Long']).strip()),3)
+    maxLat = 0
+    maxLong = 0
+    for i in range(2,len(file_json_d),12): 
+        arr = file_json_d[i]['0'].split(' ')
+        if arr[22] == '':
+            lat = float(arr[23])
+        else:
+            lat = float(arr[22])
+        if lat < latitude and lat > maxLat :
+            maxLat = lat
+    for i in range(2,len(file_json_d),12): 
+        arr = file_json_d[i]['0'].split(' ')
+        if arr[22] == '':
+            lat = float(arr[23])
+            long = float(arr[26])
+        else :
+            lat = float(arr[22])
+            long = float(arr[25])
+            
+        if lat == maxLat and long < longitude and long > maxLong:
+            maxLong = long
+            index = i
+    inv = file_json_d[index-2]['0'].split(' ')[0]
+    json_d[j]["Soil file"] = inv[slice(1,len(inv))]
+    print(json_d[j])
+    x = file_json_d[slice(index-2,index+9)]
+    finaltxt = finaltxt + x
+    print(latitude ,'->' ,maxLat, 'Long',longitude , '->',maxLong,'i', index)
+with open("soil1.txt", "w") as txt_file:
+    for line in finaltxt:
+        txt_file.write("".join(line['0']) + "\n")
+with open("out4.csv", "w") as f:
+    wr = csv.DictWriter(f,fieldnames=list(json_d[0].keys()))
+    wr.writeheader()
+    wr.writerows(json_d)
+print(list(json_d[0].keys()))
+print('end')
